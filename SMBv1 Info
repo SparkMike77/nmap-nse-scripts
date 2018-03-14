@@ -1,0 +1,57 @@
+While detecting SMB is the first step, there are legitimate reasons why a server may have SMB open. For the specific case of finding servers that are vulnerable to MS17-010 we need to dig a bit deeper.
+
+Fortunately, Paulino Calderon has created an nmap NSE script which will reliably detect MS17-010.  The script is not part of the standard nmap NSE scripts, so you will need to go and grab the smb-vuln-ms17-010 script from github and place it into the NSE scripts directory before you can use it (on linux that directory is /usr/share/nmap/scripts/)
+
+This is the nmap command line that seems to work best with this nse script.  (with thanks to Neo23x0)
+
+nmap  -Pn -p445 --open --max-hostgroup 3 --script smb-vuln-ms17-010  <ip_netblock>
+
+When the scan finds a server with SMB open and not vulnerable to MS17-010 then the output looks identical to the previous scan however a vulnerable server will generate additional output.
+
+Starting Nmap 7.40 ( https://nmap.org ) at 2017-07-01 11:13 EDT
+
+Nmap scan report for ...
+
+Host is up (0.23s latency).
+
+PORT    STATE SERVICE
+
+445/tcp open  microsoft-ds
+
+ 
+
+Host script results:
+
+| smb-vuln-ms17-010: 
+
+|   VULNERABLE:
+
+|   Remote Code Execution vulnerability in Microsoft SMBv1 servers (ms17-010)
+
+|     State: VULNERABLE
+
+|     IDs:  CVE:CVE-2017-0143
+
+|     Risk factor: HIGH
+
+|       A critical remote code execution vulnerability exists in Microsoft SMBv1
+
+|        servers (ms17-010).
+
+|       
+
+|     Disclosure date: 2017-03-14
+
+|     References:
+
+|       https://technet.microsoft.com/en-us/library/security/ms17-010.aspx
+
+|       https://blogs.technet.microsoft.com/msrc/2017/05/12/customer-guidance-for-wannacrypt-attacks/
+
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143
+
+ 
+
+UPDATE: It was pointed out that a version of this script was packaged with the 7.50 version of nmap that was released in mid-June.  For those of you who are not yet on the 7.50 version (like me) you can get the packaged version of the script from the nmap svn repository.  The packaged version is slightly different than the one on github.
+
+-- Rick Wanner MSISE - rwanner at isc dot sans dot edu - http://namedeplume.blogspot.com/ - Twitter:namedeplume (Protected)
